@@ -51,17 +51,7 @@ app.get("/fisioterapeutas", (req, result) => {
 app.post("/insertFisio", (req, res) => {
   //console.log(req.body);
   console.log(req.body);
-  /* const fisio =  {
-        nombre: req.body.nombre,
-        apPaterno : req.body.apPaterno,
-        apMaterno : req.body.apMaterno,
-        dir : req.body.dir,
-        contact1 : req.body.contact1,
-        contact2 : req.body.contact2,
-        puesto : req.body.puesto,
-        user : req.body.user,
-        pass : req.body.pass
-    };*/
+  
   const {
     nombre,
     apPaterno,
@@ -94,10 +84,10 @@ app.post("/insertFisio", (req, res) => {
       } else  return res.status(200).json({status: 'success', data:res.body});
     }
   );
-  res.status(200).send("OK");
 });
 //Función para el login [Obtener un registro ingresado]
-app.get("/loginFisio",(req, res)=>{
+app.post("/loginFisio",(req, res)=>{
+  console.log(req.body);
   const {user, pass} = req.body;
   //console.log(user+"Contraseña "+pass);
   connection.query("SELECT COUNT(*) as registro FROM fisioterapeuta WHERE user=? AND pass=?", [user, pass], (err, result)=>{
@@ -107,9 +97,9 @@ app.get("/loginFisio",(req, res)=>{
       if(result[0].registro>0){
         //console.log("Se encontró el usuario: ", result);
         //Enconttramos el usuario, pasamos al index del usaurio
-      res.status(200).send("Usuario encontrado");
+      res.status(200).send("1");
       }else{
-        res.send("ERROR, datos no encontrados");
+        res.send("0");
       }
     }
   });
@@ -146,7 +136,33 @@ app.post("/insertCitas", (req, res)=>{
   });
 });
 //
+app.post("/insertPaciente",(req,res)=>{
+  console.log(req.body);
+  const {
+    nombre,
+    edad,
+    diagnostico,
+    tratamiento
+  } = req.body;
+  console.log("Info format: "+nombre, edad, diagnostico, tratamiento);
+  connection.query(
+    "INSERT INTO paciente  SET ?",
+    {
+      nombre,
+      edad,
+      diagnostico,
+      tratamiento
+    },
+    (err, result) => {
+      if (err) {
+        console.log(err);
+        return  res.sendStatus(500);
+      } else  return res.status(200).json({status: 'success', data:req.body});
+    });
 
+    //res.status(200).send("OK");
+});
+//
 //En que puerto es en el que trabaja el servidor
 app.listen(3000, function () {
   console.log("running at 3000");
